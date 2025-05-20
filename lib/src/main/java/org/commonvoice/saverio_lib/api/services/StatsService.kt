@@ -4,6 +4,7 @@ import org.commonvoice.saverio_lib.api.requestBodies.RetrofitStatsUpdate
 import org.commonvoice.saverio_lib.api.requestBodies.RetrofitUserAppUsageBody
 import org.commonvoice.saverio_lib.api.responseBodies.ResponseAppUsage
 import org.commonvoice.saverio_lib.api.responseBodies.ResponseDailyUsage
+import org.commonvoice.saverio_lib.api.responseBodies.MozillaLanguageStat
 import org.commonvoice.saverio_lib.models.Message
 import retrofit2.Response
 import retrofit2.http.*
