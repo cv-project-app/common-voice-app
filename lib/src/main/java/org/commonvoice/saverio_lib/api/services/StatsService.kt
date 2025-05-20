@@ -44,6 +44,12 @@ interface StatsService {
         @Query("end_date") end_date: String?
     ): Response<ResponseAppUsage>
 
+    @GET("https://commonvoice.mozilla.org/api/v1/stats/languages") // Absolute URL to Mozilla API
+suspend fun getMozillaLanguageStats(): Response<List<MozillaLanguageStat>>
+
+@GET("v2/messages/get/")
+suspend fun getNewMessages(): Response<Map<String, Message>>
+    
     @GET("v2/messages/get/")
     suspend fun getNewMessages(): Response<Map<String, Message>>
 
