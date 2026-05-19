@@ -1,5 +1,6 @@
 package org.commonvoice.saverio.ui.login
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
@@ -146,6 +148,27 @@ class LoginFragment : ViewBoundFragment<FragmentLoginBinding>() {
         settings.userAgentString = settings.userAgentString.replace("; wv", "")
 
         webViewClient = object : WebViewClient() {
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
+                val uri = request?.url ?: return false
+                val host = uri.host
+                val isAuthHost = host == "commonvoice.mozilla.org"
+                    || host == "auth.mozilla.auth0.com"
+                    || host?.endsWith(".mozilla.org") == true
+                    || host?.endsWith(".auth0.com") == true
+                if (isAuthHost && (uri.scheme == "https" || uri.scheme == "http")) {
+                    return false
+                }
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, uri))
+                } catch (e: ActivityNotFoundException) {
+                    Timber.w(e, "No activity to handle %s", uri)
+                }
+                return true
+            }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 showLoading()
