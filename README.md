@@ -4,6 +4,15 @@
     <br>
 </h1>
 
+<hr>
+
+<b>Important message about the future of the app. [You can read it on Telegram.](https://t.me/sav_projects/6/1026)
+(you don't need to have Telegram installed)
+
+Thank you, everyone! ❤️</b>
+
+<hr>
+
 
 [**Official web page of this project**](https://www.saveriomorelli.com/commonvoice/): you can find F.A.Q. and some useful links.
 
