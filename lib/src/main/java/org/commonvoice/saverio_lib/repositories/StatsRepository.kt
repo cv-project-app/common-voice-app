@@ -54,8 +54,36 @@ class StatsRepository(
         }
     }
 
-    suspend fun getStats(): Map<String, ResponseDailyUsage> =
-        statsClient.getStats().body() ?: mapOf()
+    suspend fun getStats(): Map<String, ResponseDailyUsage> = withContext(Dispatchers.IO) {
+    try {
+        val mozillaResponse = statsClient.getMozillaLanguageStats() // Call the new service method
+        if (mozillaResponse.isSuccessful) {
+            val mozillaStatsList = mozillaResponse.body()
+            if (mozillaStatsList != null) {
+                // Transform Mozilla's response to the Map<String, ResponseDailyUsage> format
+                val transformedStats = mozillaStatsList.associate { mozillaStat ->
+                    // 'mozillaStat.locale' is the language code (e.g., "en")
+                    // 'mozillaStat.speakersCount' is the number of users
+                    mozillaStat.locale to ResponseDailyUsage(
+                        users = mozillaStat.speakersCount,
+                        logged = 0 // Mozilla API doesn't provide 'logged' count here
+                    )
+                }
+                Timber.d("Successfully fetched and transformed Mozilla language stats.")
+                return@withContext transformedStats
+            } else {
+                Timber.e("Mozilla language stats response body was null.")
+            }
+        } else {
+            Timber.e("Failed to fetch Mozilla language stats. Code: ${mozillaResponse.code()}, Message: ${mozillaResponse.message()}")
+        }
+    } catch (e: Exception) {
+        Timber.e(e, "Exception while fetching Mozilla language stats.")
+    }
+    // If anything goes wrong, return an empty map to prevent crashes,
+    // matching the old behavior of '?: mapOf()'
+    return@withContext mapOf<String, ResponseDailyUsage>()
+}
 
     suspend fun getLanguageSpecificStats(language: String): ResponseDailyUsage? {
         return statsClient.getLanguageSpecificStats(language).body()?.get(language)
